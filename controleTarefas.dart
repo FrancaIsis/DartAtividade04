@@ -16,15 +16,60 @@ de busca por título utilizando o método .where(), sem diferenciar maiúsculas 
 import 'dart:io';
 
 void main() {
-  print('-' * 70);
-  print('GERENCIADOR DE TAREFAS');
-  print('-' * 70);
-
+  List<Map<String, dynamic>> tarefas = [];
   while (true) {
-    print('Gerenciador de Tarefas');
     print('-' * 70);
+    print('GERENCIADOR DE TAREFAS');
+    print('-' * 70);
+
     print(
       'Escolha uma opção:\n1 - Listar tarefas\n2 - Adicionar tarefas\n3 - Marcar tarefa como concluída\n4 - Excluír tarefa\n5 - Sair',
     );
+    stdout.write('Digite a opção escolhida:');
+    int? opcao = int.tryParse(stdin.readLineSync() ?? '');
+    if (opcao == null) {
+      print('Opção inválida');
+      continue;
+    }
+    switch (opcao) {
+      case 1: // listando tarefas
+        if (tarefas.isEmpty) {
+          print('Não há tarefas agendadas.');
+        } else {
+          for (int i = 0; i < tarefas.length; i++) {
+            print(
+              '${i + 1}.${tarefas[i]['titulo']} - ${tarefas[i]['descricao']} | Concluída: ${tarefas[i]['concluida']}',
+            ); // colocar outros status
+          }
+        }
+        break;
+      case 2: // adicionando tarefas
+        stdout.write('Insira o título da tarefa: ');
+        String? titulo = stdin.readLineSync() ?? '';
+        if (titulo.trim().isEmpty) {
+          print('Informe um valor válido.');
+          continue;
+        }
+        stdout.write('Descrição da tarefa: ');
+        String? descricao = stdin.readLineSync() ?? '';
+        if (descricao.trim().isEmpty) {
+          descricao = 'Não informado';
+        }
+        tarefas.add({
+          'titulo': titulo,
+          'descricao': descricao,
+          'concluida': false,
+        });
+        print('Tarefa adicionada com sucesso!');
+        break;
+      case 3: // marcar como concluida
+        break;
+      case 4: // excluir
+        break;
+      case 5: //sair
+        break;
+      default:
+        print('Opção inválida');
+    }
   }
 }
