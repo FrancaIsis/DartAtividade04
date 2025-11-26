@@ -17,14 +17,16 @@ import 'dart:io';
 
 void main() {
   List<Map<String, dynamic>> tarefas = [];
+
   while (true) {
     print('-' * 70);
     print('GERENCIADOR DE TAREFAS');
     print('-' * 70);
 
     print(
-      'Escolha uma opção:\n1 - Listar tarefas\n2 - Adicionar tarefas\n3 - Marcar tarefa como concluída\n4 - Excluír tarefa\n5 - Sair',
+      'Escolha uma opção:\n1 - Listar tarefas\n2 - Adicionar tarefas\n3 - Marcar tarefa como concluída\n4 - Excluír tarefa\n5 - Filtrar tarefas\n6 - Sair\n',
     );
+
     stdout.write('Digite a opção escolhida:');
     int? opcao = int.tryParse(stdin.readLineSync() ?? '');
     if (opcao == null) {
@@ -39,9 +41,11 @@ void main() {
           for (int i = 0; i < tarefas.length; i++) {
             print(
               '${i + 1}.${tarefas[i]['titulo']} - ${tarefas[i]['descricao']} | Concluída: ${tarefas[i]['concluida']}',
-            ); // colocar outros status
+            );
+            print('-' * 70);
           }
         }
+
         break;
       case 2: // adicionando tarefas
         stdout.write('Insira o título da tarefa: ');
@@ -63,11 +67,86 @@ void main() {
         print('Tarefa adicionada com sucesso!');
         break;
       case 3: // marcar como concluida
+        if (tarefas.isEmpty) {
+          print('Não há tarefas a serem concluídas.');
+          break;
+        }
+        for (int i = 0; i < tarefas.length; i++) {
+          print(
+            '${i + 1}.${tarefas[i]['titulo']} - ${tarefas[i]['descricao']} | Concluída: ${tarefas[i]['concluida']}',
+          );
+          print('-' * 70);
+        }
+        stdout.write('Insira o número da tarefa a ser concluída:');
+        int? idTarefa = int.tryParse(stdin.readLineSync() ?? '');
+        if (idTarefa == null || idTarefa < 1 || idTarefa > tarefas.length) {
+          print('Não há tarefas com esse número. Informe um número válido.');
+          break;
+        }
+        //marcando como concluida
+        tarefas[idTarefa - 1]['concluida'] = true;
+        print('Tarefa concluída com sucesso!');
+
         break;
       case 4: // excluir
+        List<Map<String, dynamic>> concluidas = [];
+        if (tarefas.isEmpty) {
+          print('Não há tarefas a serem excluídas.');
+          break;
+        }
+        // criando a lista de concluidas e listando
+        for (var tarefa in tarefas) {
+          if (tarefa['concluida'] == true) {
+            concluidas.add(tarefa);
+            print('-' * 70);
+          }
+        }
+        if (concluidas.isEmpty) {
+          print('Não há tarefas concluídas a serem excluídas');
+          break;
+        }
+        for (int i = 0; i < concluidas.length; i++) {
+          print('${i + 1}.${concluidas[i]['titulo']}');
+        }
+        stdout.write('Insira o número da tarefa a ser excluída:');
+        int? idTarefa = int.tryParse(stdin.readLineSync() ?? '');
+        if (idTarefa == null || idTarefa < 1 || idTarefa > concluidas.length) {
+          print('Não há tarefas com esse número. Informe um número válido.');
+          break;
+        }
+        //removendo da lista
+        tarefas.remove(concluidas[idTarefa - 1]);
+        print('Tarefa excluída com sucesso!');
         break;
-      case 5: //sair
+      case 5:
+        if (tarefas.isEmpty) {
+          print('Não há tarefas agendadas.');
+        }
+        stdout.write('Digite o título da tarefa que deseja visualizar:');
+        String tituloTarefa = stdin.readLineSync()!.trim().toLowerCase();
+
         break;
+      case 6: //sair e mostrar resumo
+        List<Map<String, dynamic>> concluidas = [];
+        List<Map<String, dynamic>> pendentes = [];
+        for (var tarefa in tarefas) {
+          if (tarefa['concluida'] == true) {
+            concluidas.add(tarefa);
+          }
+        }
+        for (var tarefa in tarefas) {
+          if (tarefa['concluida'] == false) {
+            pendentes.add(tarefa);
+          }
+        }
+        var numConcluidas = concluidas.length;
+        var numPendentes = pendentes.length;
+        print('-' * 70);
+        print('Panorama das suas tarefas:');
+        print('$numConcluidas tarefas concluídas');
+        print('$numPendentes tarefas pendentes');
+        print('Até mais..');
+        exit(0);
       default:
         print('Opção inválida');
     }
