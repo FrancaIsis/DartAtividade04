@@ -40,7 +40,7 @@ void main() {
         } else {
           for (int i = 0; i < tarefas.length; i++) {
             print(
-              '${i + 1}.${tarefas[i]['titulo']} - ${tarefas[i]['descricao']} | Concluída: ${tarefas[i]['concluida']}',
+              '${i + 1}.${tarefas[i]['titulo']} - ${tarefas[i]['descricao']} | Concluída: ${tarefas[i]['concluida'] ? 'sim' : 'não'}',
             );
             print('-' * 70);
           }
@@ -119,12 +119,28 @@ void main() {
         print('Tarefa excluída com sucesso!');
         break;
       case 5:
+        List<Map<String, dynamic>> titulos = [];
         if (tarefas.isEmpty) {
           print('Não há tarefas agendadas.');
         }
         stdout.write('Digite o título da tarefa que deseja visualizar:');
         String tituloTarefa = stdin.readLineSync()!.trim().toLowerCase();
-
+        var achado = false;
+        for (var tarefa in tarefas) {
+          //varrendo os titulos
+          String tituloAtual = tarefa['titulo'].toString().toLowerCase();
+          if (tituloAtual.contains(tituloTarefa)) {
+            achado = true;
+            print('-' * 70);
+            print('Título: ${tarefa['titulo']}');
+            print('Descrição: ${tarefa['descricao']}');
+            print('Concluída: ${tarefa['concluida']}');
+            print('-' * 70);
+          }
+        }
+        if (!achado) {
+          print('Não encontramos tarefas com o título mencionado');
+        }
         break;
       case 6: //sair e mostrar resumo
         List<Map<String, dynamic>> concluidas = [];
